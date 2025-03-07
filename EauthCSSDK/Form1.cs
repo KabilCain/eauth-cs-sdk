@@ -39,14 +39,14 @@ namespace EauthCSSDK
             if (await eauth.InitRequest() == false)
             {
                 MessageBox.Show(Eauth.errorMessage);
+                Environment.Exit(1);
             }
         }
 
         private async void button1_Click(object sender, EventArgs e)
         {
             button1.Enabled = false;
-            // If you want to login only using key, use this instead: if (await eauth.LoginRequest("", "", "key here"))
-            if (await eauth.LoginRequest(textBox1.Text, textBox3.Text, ""))
+            if (await eauth.LoginRequest(textBox1.Text, textBox2.Text, ""))
             {
                 // Code block executed if credentials are valid:
                 MessageBox.Show("You have logged in successfully."
@@ -65,10 +65,14 @@ namespace EauthCSSDK
         private async void button2_Click(object sender, EventArgs e)
         {
             button2.Enabled = false;
-            if (await eauth.RegisterRequest(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text))
+            if (await eauth.LoginRequest("", "", textBox3.Text))
             {
                 // Code block executed if credentials are valid:
-                MessageBox.Show("You have registered successfully.");
+                MessageBox.Show("You have logged in successfully."
+                    + "\n " + "Rank: " + Eauth.userRank
+                    + "\n " + "Hardware-ID: " + Eauth.userHwid
+                    + "\n " + "Register Date: " + Eauth.registerDate
+                    + "\n " + "Expire Date: " + Eauth.expireDate);
             }
             else
             {
@@ -80,7 +84,22 @@ namespace EauthCSSDK
         private async void button3_Click(object sender, EventArgs e)
         {
             button3.Enabled = false;
-            if (await eauth.ResetPasswordRequest(textBox2.Text))
+            if (await eauth.RegisterRequest(textBox5.Text, textBox4.Text, textBox6.Text, textBox7.Text))
+            {
+                // Code block executed if credentials are valid:
+                MessageBox.Show("You have registered successfully.");
+            }
+            else
+            {
+                MessageBox.Show(Eauth.errorMessage);
+            }
+            button3.Enabled = true;
+        }
+
+        private async void button4_Click(object sender, EventArgs e)
+        {
+            button4.Enabled = false;
+            if (await eauth.ResetPasswordRequest(textBox8.Text))
             {
                 // Code block executed if credentials are valid:
                 MessageBox.Show("An e-mail has been sent to you.");
@@ -89,7 +108,7 @@ namespace EauthCSSDK
             {
                 MessageBox.Show(Eauth.errorMessage);
             }
-            button3.Enabled = true;
+            button4.Enabled = true;
         }
     }
 }
