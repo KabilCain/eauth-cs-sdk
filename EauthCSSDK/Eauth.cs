@@ -17,9 +17,9 @@ namespace EauthCSSDK
     internal class Eauth
     {
         /* Required configuration */
-        private string applicationToken = ""; // Your application token goes here
-        private string applicationSecret = ""; // Your application secret goes here
-        private string applicationVersion = "1.0"; // Your application version goes here
+        private string applicationToken = "application_token_here"; // Your application token goes here
+        private string applicationSecret = "application_secret_here"; // Your application secret goes here
+        private string applicationVersion = "application_version_here"; // Your application version goes here
 
         /* Advanced configuration */
         private string invalidRequestMessage = "Invalid request!";
@@ -29,6 +29,7 @@ namespace EauthCSSDK
         private string usedSessionMessage = "Why did the computer go to therapy? Because it had a case of 'Request Repeatitis' and couldn't stop asking for the same thing over and over again!";
         private string overcrowdedSessionMessage = "Session limit exceeded. Please re-launch the app!";
         private string expiredSessionMessage = "Your session has timed out. please re-launch the app!";
+        private string invalidWebhookMessage = "Webhook data are false.";
         private string invalidUserMessage = "Incorrect login credentials!";
         private string bannedUserMessage = "Access denied!";
         private string incorrectHwidMessage = "Hardware ID mismatch. Please try again with the correct device!";
@@ -494,6 +495,59 @@ namespace EauthCSSDK
             }
 
             return downloadStatus;
+        }
+
+        // Webhook request
+        public async Task<string> WebhookRequest(string webhookName, string parameters, string body = "", string contentType = "")
+        {
+            if (!init)
+            {
+                LogEauthError(unavaiableSessionMessage);
+            }
+            var jData = new
+            {
+                type = "webhook",
+                session_id = sessionID,
+                webhook_name = webhookName,
+                parameters = parameters,
+                content_type = contentType,
+                body = body,
+                pair = GenerateRandomString()
+            };
+
+            string data = JsonSerializer.Serialize(jData);
+            var response = await EauthRequest(data);
+            JsonDocument document = JsonDocument.Parse(response);
+            string message = document.RootElement.GetProperty("message").GetString();
+
+            bool downloadStatus = false;
+
+            if (message == "webhook_success")
+            {
+                return document.RootElement.GetProperty("response").GetString();
+            }
+            else if (message == "session_unavailable")
+            {
+                LogEauthError(unavaiableSessionMessage);
+            }
+            else if (message == "session_unauthorized")
+            {
+                LogEauthError(unauthorizedSessionMessage);
+            }
+            else if (message == "invalid_request")
+            {
+                LogEauthError(invalidRequestMessage); // This is usually not the case
+            }
+            else if (message == "session_expired")
+            {
+                LogEauthError(expiredSessionMessage);
+            }
+            else if (message == "invalid_webhook")
+            {
+                LogEauthError(invalidWebhookMessage);
+            }
+
+            return "";
         }
 
         // Upgrade request

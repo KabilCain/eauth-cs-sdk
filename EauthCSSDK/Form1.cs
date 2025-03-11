@@ -9,6 +9,9 @@ namespace EauthCSSDK
 
         Eauth eauth = new Eauth(); //  Eauth Required
 
+        // Webhook request
+        /*string response = await eauth.WebhookRequest("webhook name", "&param=&s=", "body", "application/json");*/
+
         // Download file
         /*
         if (await eauth.DownloadRequest("fileID", "./path", "name.format")) // (example) name.format: name.exe
