@@ -434,7 +434,7 @@ namespace EauthCSSDK
             {
                 type = "download",
                 session_id = sessionID,
-                fileid = fileID,
+                file_id = fileID,
                 pair = GenerateRandomString()
             };
 
