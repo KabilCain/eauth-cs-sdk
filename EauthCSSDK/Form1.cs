@@ -34,6 +34,15 @@ namespace EauthCSSDK
         {
             MessageBox.Show(Eauth.errorMessage);
         }
+        
+        // Check the user authentication
+        // You can run this as a timer to check if the user is still logged in after you show the main dashboard.
+        /*
+        if (!(await eauth.authMonitor()))
+        {
+            // The user is no longer logged in. They should exit the app.
+            Environment.Exit(0);
+        }
         */
 
         private async void Form1_Load(object sender, EventArgs e)
