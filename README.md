@@ -24,6 +24,9 @@ bool ResetPasswordRequest(string email);
 ```cs
 bool UpgradeRequest(string username, string key);
 ```
+```cs
+bool authMonitor();
+```
 
 Configuration
 -------------
