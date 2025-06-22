@@ -602,5 +602,29 @@ namespace EauthCSSDK
             }
             return upgrade;
         }
+        
+        // Check the user authentication
+        public async Task<bool> authMonitor()
+        {
+            var jData = new
+            {
+                type = "auth_monitor",
+                session_id = sessionID,
+                pair = GenerateRandomString()
+            };
+
+            string data = JsonSerializer.Serialize(jData);
+
+            var response = await EauthRequest(data);
+            JsonDocument document = JsonDocument.Parse(response);
+            string message = document.RootElement.GetProperty("message").GetString();
+
+            if (message == "up")
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }
