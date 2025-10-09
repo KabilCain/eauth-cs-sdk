@@ -100,7 +100,8 @@ namespace EauthCSSDK
         {
             var url = "https://eauth.us.to/api/1.2/";
             var request = new HttpRequestMessage(HttpMethod.Post, url);
-            request.Headers.Add("User-Agent", GenerateEauthHeader(data, applicationSecret));
+            private const string signature = GenerateEauthHeader(data, applicationSecret);
+            request.Headers.Add("User-Agent", signature);
             var content = new StringContent(data, Encoding.UTF8, "application/json");
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             request.Content = content;
@@ -111,10 +112,15 @@ namespace EauthCSSDK
             string message = document.RootElement.GetProperty("message").GetString();
             if (message != "invalid_request" && message != "session_unavailable" && message != "session_already_used" && message != "invalid_email")
             {
+                if (document.RootElement.GetProperty("pair").GetString() != signature)
+                {
+                    Environment.Exit(1);
+                }
+
                 string authorizationKey = response.Headers.GetValues("Eauth").FirstOrDefault();
                 if (authorizationKey != GenerateEauthHeader(responseContent, applicationSecret))
                 {
-                    Environment.Exit(0);
+                    Environment.Exit(1);
                 }
             }
             return responseContent;
