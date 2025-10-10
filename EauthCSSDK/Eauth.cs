@@ -100,7 +100,7 @@ namespace EauthCSSDK
         {
             var url = "https://eauth.us.to/api/1.2/";
             var request = new HttpRequestMessage(HttpMethod.Post, url);
-            private const string signature = GenerateEauthHeader(data, applicationSecret);
+            string signature = GenerateEauthHeader(data, applicationSecret);
             request.Headers.Add("User-Agent", signature);
             var content = new StringContent(data, Encoding.UTF8, "application/json");
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
