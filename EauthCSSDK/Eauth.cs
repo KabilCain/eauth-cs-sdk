@@ -98,7 +98,7 @@ namespace EauthCSSDK
         // Send requests to Eauth
         private async Task<string> EauthRequest(string data)
         {
-            var url = "https://eauth.us.to/api/1.2/";
+            var url = "https://eauth.us.to/api/1.3/";
             var request = new HttpRequestMessage(HttpMethod.Post, url);
             string signature = GenerateEauthHeader(data, applicationSecret);
             request.Headers.Add("User-Agent", signature);
@@ -118,7 +118,7 @@ namespace EauthCSSDK
                 }
 
                 string authorizationKey = response.Headers.GetValues("Eauth").FirstOrDefault();
-                if (authorizationKey != GenerateEauthHeader(responseContent, applicationSecret))
+                if (authorizationKey != GenerateEauthHeader(message + responseContent, applicationSecret))
                 {
                     Environment.Exit(1);
                 }
