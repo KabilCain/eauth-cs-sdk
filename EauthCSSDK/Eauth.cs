@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace EauthCSSDK
 {
@@ -40,16 +34,20 @@ namespace EauthCSSDK
         private string unauthorizedSessionMessage = "Unauthorized session.";
         private string invalidFileMessage = "Incorrect file credentials!";
         private string invalidEmailMessage = "The email you entered is either already in use or unavailable or invalid!";
+        private string unavaiableVariableMessage = "Invalid variable name. Please contact support.";
 
         /* Dynamic configuration (this refers to configuration settings that can be changed during runtime) */
         private static bool init;
         private static string sessionID;
 
         private static bool login;
+        public static string userName;
         public static string userRank;
         public static string registerDate;
         public static string expireDate;
         public static string userHwid;
+        // Custom user variable (optional)
+        //public static string customVar;
 
         private static bool register;
 
@@ -363,10 +361,13 @@ FtlOd7spqVctsJWnfVo9ai0CAwEAAQ==
             {
                 // Login success
                 login = true;
+                userName = username;
                 userRank = document.RootElement.GetProperty("rank").GetString();
                 registerDate = document.RootElement.GetProperty("register_date").GetString();
                 expireDate = document.RootElement.GetProperty("expire_date").GetString();
                 userHwid = document.RootElement.GetProperty("hwid").GetString();
+                // Custom user variable (optional)
+                //customVar = document.RootElement.GetProperty("Variable_Name").GetString();
             }
             else if (message == "session_unavailable")
             {
@@ -655,6 +656,57 @@ FtlOd7spqVctsJWnfVo9ai0CAwEAAQ==
             if (message == "up")
             {
                 return true;
+            }
+
+            return false;
+        }
+
+        // Update custom user variable
+        public async Task<bool> updateUserVariable(string varName, string varValue)
+        {
+            var jData = new
+            {
+                type = "set_var",
+                session_id = sessionID,
+                username = userName,
+                var_name = varName,
+                var_value = varValue,
+                pair = GenerateRandomString()
+            };
+
+            string data = JsonSerializer.Serialize(jData);
+
+            var response = await EauthRequest(data);
+            JsonDocument document = JsonDocument.Parse(response);
+            string message = document.RootElement.GetProperty("message").GetString();
+
+            if (message == "variable_set")
+            {
+                return true;
+            }
+            else if (message == "session_expired")
+            {
+                LogEauthError(expiredSessionMessage);
+            }
+            else if (message == "session_unauthorized")
+            {
+                LogEauthError(unauthorizedSessionMessage);
+            }
+            else if (message == "session_unavailable")
+            {
+                LogEauthError(unavaiableSessionMessage);
+            }
+            else if (message == "invalid_request")
+            {
+                LogEauthError(invalidRequestMessage); // This is usually not the case
+            }
+            else if (message == "account_unavailable")
+            {
+                LogEauthError(invalidUserMessage);
+            }
+            else if (message == "variable_unavailable")
+            {
+                LogEauthError(unavaiableVariableMessage);
             }
 
             return false;

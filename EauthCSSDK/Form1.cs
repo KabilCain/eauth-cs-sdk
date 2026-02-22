@@ -66,6 +66,12 @@ namespace EauthCSSDK
                     + "\n " + "Hardware-ID: " + Eauth.userHwid
                     + "\n " + "Register Date: " + Eauth.registerDate
                     + "\n " + "Expire Date: " + Eauth.expireDate);
+
+                // Update custom user variable
+                /*if (!await eauth.updateUserVariable("Variable_Name", "New_Variable_Value"))
+                {
+                    MessageBox.Show(Eauth.errorMessage);
+                }*/
             }
             else
             {
