@@ -72,6 +72,9 @@ namespace EauthCSSDK
                 {
                     MessageBox.Show(Eauth.errorMessage);
                 }*/
+
+                // Pause user subscription
+                //eauth.pauseSubscription();
             }
             else
             {

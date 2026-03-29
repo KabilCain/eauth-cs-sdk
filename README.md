@@ -27,6 +27,12 @@ bool UpgradeRequest(string username, string key);
 ```cs
 bool authMonitor();
 ```
+```cs
+bool updateUserVariable(string varName, string varValue);
+```
+```cs
+void pauseSubscription();
+```
 
 Configuration
 -------------

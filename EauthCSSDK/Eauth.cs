@@ -668,7 +668,6 @@ FtlOd7spqVctsJWnfVo9ai0CAwEAAQ==
             {
                 type = "set_var",
                 session_id = sessionID,
-                username = userName,
                 var_name = varName,
                 var_value = varValue,
                 pair = GenerateRandomString()
@@ -710,6 +709,23 @@ FtlOd7spqVctsJWnfVo9ai0CAwEAAQ==
             }
 
             return false;
+        }
+
+        // Pause user subscription
+        public async void pauseSubscription()
+        {
+            var jData = new
+            {
+                type = "pause_sub",
+                session_id = sessionID,
+                pair = GenerateRandomString()
+            };
+
+            string data = JsonSerializer.Serialize(jData);
+
+            var response = await EauthRequest(data);
+
+            Environment.Exit(0);
         }
     }
 }
